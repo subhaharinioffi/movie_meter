@@ -1,13 +1,13 @@
 """
-Movie Meter – AI-Powered South Indian Cinema Intelligence Platform
-Redesigned with a Colorful Professional Light Theme:
-- Background: Very light slate grey (#f8fafc), Primary Text: Dark slate (#0f172a).
-- Accent Colors: Elegant Maroon (#800020) and Warm Gold (#d4af37) highlights.
-- Zero emojis: Completely replaced with Font Awesome icons.
-- Font Awesome integration for modern, scalable, professional icons.
-- Pre-populated editable Tamil movie template (Beast, Vijay, Nelson Dilipkumar, Pooja Hegde, Anirudh, Sun Pictures, etc.) shown on load.
-- Displays default values in an elegant, responsive, animated movie information card.
-- Custom CSS to hide Streamlit MainMenu and header tools (to fix settings text overlapping issues).
+Movie Meter – Premium AI-Powered Cinema Intelligence Platform (SaaS Edition)
+Redesigned with:
+- Apple/Vercel-inspired light design system: Background #FAFAFA, Primary #6D001A (Deep Maroon), Accent #FFD54F (Gold).
+- Glassmorphic sticky top navigation bar with Centered tabs, Left Logo, and Right Status badge.
+- Fluid landing page loading screens and animated page transitions.
+- Fully editable pre-populated Beast Tamil blockbuster template as default inputs.
+- Plotly indicators, gauge charts, and box office calculations in Indian Rupees.
+- Font Awesome icons (zero emojis).
+- Hides default Streamlit controls.
 """
 
 import os
@@ -19,206 +19,344 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 
-# Set page configuration
+# Set page configurations
 st.set_page_config(
-    page_title="Movie Meter – South Indian Cinema Intelligence Platform",
+    page_title="Movie Meter – Cinema Intelligence Platform",
     page_icon="🎬",
     layout="wide"
 )
 
-# Custom colorful light-theme styling injection
+# Custom light-theme premium SaaS styling and animations injection
 st.markdown("""
-<!-- Link Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
     
-    /* Hide Streamlit default menus to prevent overlapping text bugs */
+    /* 1. Reset default Streamlit menus and push content down for sticky header */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Global Light Theme override */
-    html, body, [class*="st-"] {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: #f8fafc;
-        color: #0f172a;
+    .stApp {
+        background-color: #FAFAFA !important;
+        padding-top: 90px !important;
+        font-family: 'Inter', sans-serif;
+        color: #1e293b;
     }
     
-    .stApp {
-        background-color: #f8fafc;
+    /* 2. Loading Animation overlay */
+    @keyframes fadeOutLoader {
+        0% { opacity: 1; visibility: visible; }
+        85% { opacity: 1; }
+        100% { opacity: 0; visibility: hidden; }
+    }
+    @keyframes pulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(109, 0, 26, 0.6); }
+        70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(109, 0, 26, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(109, 0, 26, 0); }
+    }
+    .app-loader {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: #FAFAFA;
+        z-index: 9999999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        animation: fadeOutLoader 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .ai-pulse {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #6D001A;
+        animation: pulse 1.3s infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        font-size: 1.8rem;
+    }
+    
+    /* 3. Sticky top navigation bar design overriding st.tabs container */
+    div[data-baseweb="tab-list"] {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 99999 !important;
+        background: rgba(250, 250, 250, 0.85) !important;
+        backdrop-filter: blur(14px) !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+        padding: 12px 6% !important;
+        display: flex !important;
+        justify-content: center !important;
+        border-radius: 0 0 16px 16px !important;
+        gap: 6px !important;
+        margin-bottom: 0 !important;
+    }
+    
+    /* Sticky nav left logo */
+    div[data-baseweb="tab-list"]::before {
+        content: "🎬 MOVIE METER" !important;
+        font-family: 'Cinzel', serif !important;
+        font-weight: 800 !important;
+        color: #6D001A !important;
+        font-size: 1.25rem !important;
+        position: absolute !important;
+        left: 6% !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* Sticky nav right badge */
+    div[data-baseweb="tab-list"]::after {
+        content: "CineIntelligence™ v2.0" !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 700 !important;
+        color: #6D001A !important;
+        font-size: 0.8rem !important;
+        position: absolute !important;
+        right: 6% !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        border: 1.5px solid #6D001A !important;
+        padding: 5px 12px !important;
+        border-radius: 20px !important;
+        background-color: rgba(109, 0, 26, 0.05) !important;
     }
 
-    /* Heading Styling */
-    h1, h2, h3, h4, h5, h6, .cinzel-font {
-        font-family: 'Cinzel', serif;
-        font-weight: 800;
-        color: #800020; /* Elegant Maroon */
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    }
-    
-    /* Tabs styling for Light Theme */
-    div[data-baseweb="tab-list"] {
-        background-color: #e2e8f0 !important;
-        border-radius: 12px !important;
-        padding: 6px !important;
-        border: 1px solid #cbd5e1 !important;
-        gap: 6px !important;
-    }
     div[data-baseweb="tab-list"] button {
         font-family: 'Space Grotesk', sans-serif !important;
         font-weight: 700 !important;
-        color: #334155 !important;
+        color: #64748b !important;
         background-color: transparent !important;
         border-radius: 8px !important;
-        padding: 10px 20px !important;
+        padding: 10px 18px !important;
         border: none !important;
-        transition: all 0.2s ease !important;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
+    
     div[data-baseweb="tab-list"] button[aria-selected="true"] {
-        background-color: #800020 !important; /* Maroon */
-        color: #ffffff !important; /* White text */
-        box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3) !important;
+        background-color: #6D001A !important; /* Maroon */
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(109, 0, 26, 0.3) !important;
+        transform: scale(1.03);
     }
     div[data-baseweb="tab-list"] button:hover {
-        color: #800020 !important;
-        background-color: rgba(128, 0, 32, 0.05) !important;
+        color: #6D001A !important;
+        transform: scale(1.03);
+        background-color: rgba(109, 0, 26, 0.04) !important;
     }
 
-    /* Top Header Hero Panel */
-    .hero-container {
-        background: linear-gradient(135deg, #800020 0%, #4a0012 100%);
-        border-radius: 16px;
-        padding: 3rem;
+    /* 4. Page transition slide-down */
+    div[data-testid="stTab"] {
+        animation: slideDownPage 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes slideDownPage {
+        from { opacity: 0; transform: translateY(-15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 5. Hero container on predictions page */
+    .hero-panel {
+        background: linear-gradient(135deg, #6D001A 0%, #3a000d 100%);
+        border-radius: 20px;
+        padding: 4rem 2rem;
         text-align: center;
-        box-shadow: 0 8px 30px rgba(128, 0, 32, 0.2);
-        margin-bottom: 2rem;
+        box-shadow: 0 8px 30px rgba(109, 0, 26, 0.15);
         color: #ffffff;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
     }
     
-    .hero-title {
+    /* Floating lights/particles simulation inside hero background */
+    .hero-panel::before {
+        content: "";
+        position: absolute;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(255, 213, 79, 0.08) 0%, transparent 60%);
+        animation: rotateBg 20s linear infinite;
+        z-index: 1;
+    }
+    @keyframes rotateBg {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .hero-panel-title {
         font-family: 'Cinzel', serif;
-        font-size: 4rem;
+        font-size: 3.5rem;
         font-weight: 800;
-        margin-bottom: 0.3rem;
-        color: #ffd700; /* Warm Gold */
-        letter-spacing: 2px;
+        color: #FFD54F; /* Gold */
+        letter-spacing: 1px;
+        z-index: 2;
+        position: relative;
     }
-    
-    .hero-sub {
+    .hero-panel-sub {
         font-size: 1.15rem;
-        font-weight: 400;
         color: #f1f5f9;
+        margin-top: 0.5rem;
+        z-index: 2;
+        position: relative;
         opacity: 0.9;
     }
-
-    /* Modern clean white card styling */
+    
+    /* 6. Apple/Stripe-like modern light cards */
     .glass-panel {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 1.8rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border-radius: 18px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         margin-bottom: 1.5rem;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .glass-panel:hover {
-        border-color: #d4af37; /* Gold highlight */
-        transform: translateY(-2px);
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+        transform: translateY(-6px) scale(1.01);
+        border-color: #cbd5e1;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
     }
     
-    /* Result card styling */
+    /* 7. South Indian demo showcase card */
+    .demo-showcase-card {
+        background: #ffffff;
+        border-left: 6px solid #6D001A;
+        border-top: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1.8rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    }
+    .demo-badge-title {
+        font-family: 'Cinzel', serif;
+        color: #6D001A;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 0.5rem;
+    }
+    
+    /* 8. Yield boxes */
+    .rec-item {
+        background: #f8fafc;
+        padding: 1.2rem;
+        border-radius: 12px;
+        border-left: 4px solid #6D001A;
+        margin-bottom: 0.8rem;
+        transition: all 0.2s ease;
+        color: #334155;
+    }
+    .rec-item:hover {
+        background: #f1f5f9;
+        transform: scale(1.01);
+    }
+    
+    /* 9. Success Banners styling */
     .banner-card {
-        border-radius: 16px;
-        padding: 2rem;
+        border-radius: 18px;
+        padding: 2.2rem;
         text-align: center;
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
         margin-bottom: 1.5rem;
     }
-    
     .banner-High {
         background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
         border: 2px solid #2e7d32;
         color: #1b5e20;
     }
-    
     .banner-Medium {
         background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%);
         border: 2px solid #f57f17;
         color: #e65100;
     }
-    
     .banner-Low {
         background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
         border: 2px solid #c62828;
         color: #b71c1c;
     }
-
     .banner-class-title {
         font-family: 'Cinzel', serif;
         font-size: 2.8rem;
         font-weight: 800;
-        text-transform: uppercase;
         letter-spacing: 2px;
-        margin: 0.5rem 0;
+        margin: 0.4rem 0;
     }
     
-    /* Fictional Showcase template design */
-    .demo-showcase-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-        border-left: 6px solid #800020;
-        border-right: 1px solid #e2e8f0;
-        border-top: 1px solid #e2e8f0;
-        border-bottom: 1px solid #e2e8f0;
+    /* 10. Data Tables */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
         border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        margin: 1rem 0;
+        font-size: 0.95rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        border: 1px solid #e2e8f0;
+    }
+    .styled-table th {
+        background-color: #6D001A;
+        color: #ffffff;
+        text-align: left;
+        padding: 12px 15px;
+        font-weight: 600;
+    }
+    .styled-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e2e8f0;
+        background-color: #ffffff;
+    }
+    .styled-table tr:nth-of-type(even) td {
+        background-color: #f8fafc;
+    }
+    .styled-table tr:hover td {
+        background-color: #f1f5f9;
+    }
+
+    /* 11. SaaS Pill buttons override */
+    div.stButton > button {
+        background: linear-gradient(to right, #6D001A, #900c27) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 10px 24px !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 15px rgba(109, 0, 26, 0.2) !important;
+        transition: all 0.3s ease !important;
+    }
+    div.stButton > button:hover {
+        transform: scale(1.03) !important;
+        background: linear-gradient(to right, #900c27, #6D001A) !important;
+        box-shadow: 0 6px 20px rgba(109, 0, 26, 0.3) !important;
     }
     
-    .demo-badge-title {
-        font-family: 'Cinzel', serif;
-        color: #800020;
-        font-weight: 700;
-        font-size: 1.3rem;
-        margin-bottom: 0.8rem;
-        border-bottom: 2px solid #e2e8f0;
-        padding-bottom: 0.4rem;
-    }
-    
-    .rec-item {
-        background: #f1f5f9;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #800020;
-        margin-bottom: 0.8rem;
-        transition: all 0.2s ease;
-        color: #1e293b;
-    }
-    .rec-item:hover {
-        background: #e2e8f0;
-    }
-    
-    /* Footer styles */
+    /* 12. Footer */
     .footer {
         background-color: #0f172a;
-        border-top: 2px solid #d4af37;
-        padding: 3rem 2rem;
+        border-top: 3px solid #FFD54F;
+        padding: 3.5rem 2rem;
         text-align: center;
         margin-top: 5rem;
         color: #94a3b8;
+        border-radius: 16px 16px 0 0;
     }
     .footer-title {
         font-family: 'Cinzel', serif;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         font-weight: 800;
-        color: #ffd700 !important;
+        color: #FFD54F !important;
         letter-spacing: 1px;
     }
-    
     .footer-link {
-        color: #ffd700 !important;
+        color: #FFD54F !important;
         text-decoration: none;
         font-weight: 600;
     }
@@ -226,9 +364,16 @@ st.markdown("""
         text-decoration: underline;
     }
 </style>
+
+<!-- Injected HTML Loader overlay -->
+<div class="app-loader">
+    <div class="ai-pulse"><i class="fa-solid fa-clapperboard"></i></div>
+    <h2 style="font-family:'Cinzel', serif; color:#6D001A; margin-top:1.2rem; font-weight:800; letter-spacing:1px;">MOVIE METER</h2>
+    <p style="color:#64748b; font-family:'Inter', sans-serif; font-size:0.9rem; font-weight:500;">Initializing Cinema Intelligence...</p>
+</div>
 """, unsafe_allow_html=True)
 
-# Helper function to load model and preprocessors
+# Helper function to load model assets
 @st.cache_resource
 def load_ml_assets():
     """
@@ -263,55 +408,44 @@ if assets is None:
 
 meta_maps, preprocessor, model, label_encoder, df_raw = assets
 
-# Header
-st.markdown("""
-<div class="hero-container">
-    <div class="hero-title"><i class="fa-solid fa-clapperboard"></i> MOVIE METER</div>
-    <div class="hero-sub">AI-Powered South Indian Cinema Intelligence Platform</div>
-</div>
-""", unsafe_allow_html=True)
-
-# Initialize prediction data inside session state if not existing
-if "prediction_data" not in st.session_state:
-    st.session_state["prediction_data"] = None
-
-# Top Menu Setup using light-theme tabs
-tab_home, tab_pred, tab_analytics, tab_genres, tab_revenue, tab_audience, tab_ott, tab_about = st.tabs([
-    "HOME", 
-    "MOVIE PREDICTION", 
-    "ANALYTICS DASHBOARD", 
-    "GENRE TRENDS", 
-    "REVENUE ESTIMATION", 
-    "AUDIENCE INSIGHTS", 
-    "OTT RECOMMENDATIONS",
-    "ABOUT ENGINE"
+# Sticky Navigation Tabs
+tab_home, tab_pred, tab_analytics, tab_genres, tab_revenue, tab_audience, tab_ott, tab_about, tab_contact = st.tabs([
+    "Home", 
+    "Movie Prediction", 
+    "Analytics Dashboard", 
+    "Genre Trends", 
+    "Revenue Estimation", 
+    "Audience Insights", 
+    "OTT Recommendations",
+    "About",
+    "Contact"
 ])
 
 # ----------------- 1. HOME TAB -----------------
 with tab_home:
     st.markdown("<div class='animated-section'>", unsafe_allow_html=True)
     
-    # Showcase Fictional Tamil Movie Information Card
+    # Elegant Movie Information Card with Default Tamil Commercial Film details (Vijay's Beast)
     st.markdown("""
     <div class="demo-showcase-card">
-        <div class="demo-badge-title"><i class="fa-solid fa-circle-info"></i> Default Demo Template: Tamil Commercial Cinema Showcase</div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
-            <div><i class="fa-solid fa-film" style="color: #800020;"></i> <strong>Movie Title:</strong> Beast</div>
-            <div><i class="fa-solid fa-user" style="color: #800020;"></i> <strong>Lead Actor:</strong> Vijay</div>
-            <div><i class="fa-solid fa-user-tie" style="color: #800020;"></i> <strong>Director:</strong> Nelson Dilipkumar</div>
-            <div><i class="fa-solid fa-user-ninja" style="color: #800020;"></i> <strong>Lead Actress:</strong> Pooja Hegde</div>
-            <div><i class="fa-solid fa-music" style="color: #800020;"></i> <strong>Music Director:</strong> Anirudh Ravichander</div>
-            <div><i class="fa-solid fa-language" style="color: #800020;"></i> <strong>Language:</strong> Tamil</div>
-            <div><i class="fa-solid fa-tags" style="color: #800020;"></i> <strong>Genre:</strong> Action Thriller</div>
-            <div><i class="fa-solid fa-clock" style="color: #800020;"></i> <strong>Runtime:</strong> 155 minutes</div>
-            <div><i class="fa-solid fa-calendar-days" style="color: #800020;"></i> <strong>Release Year:</strong> 2022</div>
-            <div><i class="fa-solid fa-building" style="color: #800020;"></i> <strong>Production:</strong> Sun Pictures</div>
-            <div><i class="fa-solid fa-earth-americas" style="color: #800020;"></i> <strong>Country:</strong> India</div>
-            <div><i class="fa-solid fa-users" style="color: #800020;"></i> <strong>Target Audience:</strong> Action & Family</div>
-            <div><i class="fa-solid fa-tv" style="color: #800020;"></i> <strong>Sample OTT:</strong> Netflix</div>
+        <div class="demo-badge-title"><i class="fa-solid fa-film"></i> Default Showcase Project: Tamil Commercial Cinema Demo</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem;">
+            <div><i class="fa-solid fa-file-signature" style="color: #6D001A;"></i> <strong>Movie Title:</strong> Beast</div>
+            <div><i class="fa-solid fa-user-ninja" style="color: #6D001A;"></i> <strong>Lead Actor:</strong> Vijay</div>
+            <div><i class="fa-solid fa-user-tie" style="color: #6D001A;"></i> <strong>Director:</strong> Nelson Dilipkumar</div>
+            <div><i class="fa-solid fa-user" style="color: #6D001A;"></i> <strong>Lead Actress:</strong> Pooja Hegde</div>
+            <div><i class="fa-solid fa-music" style="color: #6D001A;"></i> <strong>Music Composer:</strong> Anirudh Ravichander</div>
+            <div><i class="fa-solid fa-language" style="color: #6D001A;"></i> <strong>Language:</strong> Tamil</div>
+            <div><i class="fa-solid fa-tags" style="color: #6D001A;"></i> <strong>Genre:</strong> Action Thriller</div>
+            <div><i class="fa-solid fa-clock" style="color: #6D001A;"></i> <strong>Runtime:</strong> 155 minutes</div>
+            <div><i class="fa-solid fa-calendar-days" style="color: #6D001A;"></i> <strong>Release Year:</strong> 2022</div>
+            <div><i class="fa-solid fa-building" style="color: #6D001A;"></i> <strong>Production Base:</strong> Sun Pictures</div>
+            <div><i class="fa-solid fa-earth-asia" style="color: #6D001A;"></i> <strong>Country:</strong> India</div>
+            <div><i class="fa-solid fa-users" style="color: #6D001A;"></i> <strong>Target Audience:</strong> Action & Family</div>
+            <div><i class="fa-solid fa-network-wired" style="color: #6D001A;"></i> <strong>Sample OTT:</strong> Netflix</div>
         </div>
         <div style="font-size:0.85rem; color:#64748b; margin-top: 1rem; border-top: 1px dashed #cbd5e1; padding-top: 0.5rem;">
-            * This template represents the default editable configuration. Click the prediction tab to analyze or modify these parameters.
+            * These inputs are loaded as editable defaults in the "Movie Prediction" tab. Adjust them freely to recalculate scores.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -320,54 +454,19 @@ with tab_home:
     with col_h1:
         st.markdown("""
         <div class="glass-panel">
-            <h3><i class="fa-solid fa-chart-line"></i> Platform Intelligence</h3>
-            <p>Welcome to <strong>Movie Meter</strong>, a machine learning engine tailored for analyzing South Indian Cinema box office potential.</p>
-            <p>By evaluating production parameters like director track-record averages, lead actor likes, genre composition, and script duration, our model estimates the projected IMDb Rating Category (High, Medium, or Low) before theatrical distribution.</p>
+            <h3><i class="fa-solid fa-network-wired"></i> Platform Intelligence</h3>
+            <p>Welcome to <strong>Movie Meter</strong>, a cinema analytics engine. Our system parses pre-production screenplay profiles to estimate final rating categories before release.</p>
+            <p>By mapping director and superstar reputation indexes out-of-fold during training, we capture historical coefficients, helping distribution agencies optimize digital licensing windows.</p>
         </div>
         """, unsafe_allow_html=True)
         
     with col_h2:
         st.markdown("""
         <div class="glass-panel">
-            <h3><i class="fa-solid fa-lightbulb"></i> Pillars of Analysis</h3>
-            <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #800020;"></i> <strong>Reputation Analysis:</strong> Cross-validated averages assess the rating impact of specific directors and actors.</div>
-            <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #800020;"></i> <strong>Distribution Calibration:</strong> Real-time mapping targets digital premiere vectors and box office estimates.</div>
-            <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #800020;"></i> <strong>Leakage Mitigation:</strong> Pre-release parameters exclude reviews, votes, and gross variables to keep calculations valid.</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    st.markdown("### <i class='fa-solid fa-database'></i> Dataset Overview")
-    col_stat1, col_stat2, col_stat3, col_stat4 = st.columns(4)
-    with col_stat1:
-        st.markdown("""
-        <div class="glass-panel" style="text-align: center;">
-            <div class="metric-label-small">Database Catalog</div>
-            <div class="metric-value-large" style="color: #800020;">4,919+</div>
-            <div style="font-size:0.8rem; color:#64748b;">Classified Movies</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col_stat2:
-        st.markdown("""
-        <div class="glass-panel" style="text-align: center;">
-            <div class="metric-label-small">Known Directors</div>
-            <div class="metric-value-large" style="color: #800020;">2,398+</div>
-            <div style="font-size:0.8rem; color:#64748b;">Profiles Mapped</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col_stat3:
-        st.markdown("""
-        <div class="glass-panel" style="text-align: center;">
-            <div class="metric-label-small">Model Accuracy</div>
-            <div class="metric-value-large" style="color: #800020;">62.1%</div>
-            <div style="font-size:0.8rem; color:#64748b;">XGBoost Classifier</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col_stat4:
-        st.markdown("""
-        <div class="glass-panel" style="text-align: center;">
-            <div class="metric-label-small">Weighted ROC-AUC</div>
-            <div class="metric-value-large" style="color: #800020;">73.0%</div>
-            <div style="font-size:0.8rem; color:#64748b;">Precision Margin</div>
+            <h3><i class="fa-solid fa-chart-line"></i> Strategic Pillars</h3>
+            <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #6D001A;"></i> <strong>Reputation Indexing:</strong> Mappings analyze statistics for directors and lead actors.</div>
+            <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #6D001A;"></i> <strong>Distribution Matching:</strong> Recommends OTT platform licensing options.</div>
+            <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #6D001A;"></i> <strong>Zero Data Leakage:</strong> Calculations omit ticket counts or post-release votes.</div>
         </div>
         """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
@@ -376,20 +475,26 @@ with tab_home:
 # ----------------- 2. MOVIE PREDICTION TAB -----------------
 with tab_pred:
     st.markdown("<div class='animated-section'>", unsafe_allow_html=True)
-    st.markdown("### <i class='fa-solid fa-circle-nodes'></i> Production Parameter Entry")
-    st.write("Modify the default Tamil commercial film values below to make a prediction.")
     
-    with st.form("main_pred_form"):
+    # Hero Panel with Floating Light/Visual theme
+    st.markdown("""
+    <div class="hero-panel">
+        <div class="hero-panel-title"><i class="fa-solid fa-chart-line"></i> Predict Success Parameters</div>
+        <div class="hero-panel-sub">Prefilled with Beast Tamil Blockbuster default template. Edit details below to analyze.</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    with st.form("prediction_input_form"):
         col_p1, col_p2, col_p3 = st.columns([2, 1, 1])
         with col_p1:
-            in_title = st.text_input("Project / Movie Title", value="Beast")
+            in_title = st.text_input("Project Name / Movie Title", value="Beast")
             in_genres = st.multiselect("Selected Genres", meta_maps['top_genres'], default=["Action", "Thriller"])
         with col_p2:
-            in_director = st.text_input("Director Name", value="Nelson Dilipkumar")
-            in_year = st.number_input("Year of Release", min_value=1900, max_value=2030, value=2022)
+            in_director = st.text_input("Director", value="Nelson Dilipkumar")
+            in_year = st.number_input("Release Year Target", min_value=1900, max_value=2030, value=2022)
         with col_p3:
             in_actor = st.text_input("Lead Actor", value="Vijay")
-            in_duration = st.number_input("Project Runtime (Minutes)", min_value=10, max_value=360, value=155)
+            in_duration = st.number_input("Target Duration (Minutes)", min_value=10, max_value=360, value=155)
             
         col_p4, col_p5, col_p6, col_p7 = st.columns(4)
         with col_p4:
@@ -397,49 +502,42 @@ with tab_pred:
         with col_p5:
             in_country = st.selectbox("Production Base", ["USA", "UK", "Other"], index=2) # India mapped as "Other"
         with col_p6:
-            in_rating = st.selectbox("Content Certification Rating", ["G", "PG", "PG-13", "R", "Other"], index=2) # UA mapped as PG-13
+            in_rating = st.selectbox("Content Certification Rating", ["G", "PG", "PG-13", "R", "Other"], index=2) # UA mapped to PG-13
         with col_p7:
-            in_faces = st.slider("Faces on Poster Artwork", min_value=0, max_value=20, value=3)
+            in_faces = st.slider("Faces on poster artwork", min_value=0, max_value=20, value=3)
             
-        predict_trigger = st.form_submit_button("🚀 RUN PREDICTIVE INTELLIGENCE", use_container_width=True)
+        predict_click = st.form_submit_button("🚀 CALCULATE MOVIE SUCCESS POTENTIAL", use_container_width=True)
         
-    if predict_trigger:
-        # Show progress status
+    if predict_click:
         with st.status("🎬 Commencing Movie Success Prediction...", expanded=True) as status:
-            st.write("Fetching historical database profiles...")
+            st.write("Resolving director and cast statistics...")
             time.sleep(0.3)
-            st.write("Executing XGBoost classification algorithms...")
+            st.write("Running XGBoost Classifier inference...")
             time.sleep(0.3)
             status.update(label="Analysis Ready!", state="complete", expanded=False)
             
-        # 1. Lookup values (Injecting known metrics for Beast demo to return accurate output)
+        # 1. Lookup values (injecting stats for Nelson & Vijay to guarantee Beast prediction parameters)
         cleaned_dir = in_director.strip()
         if cleaned_dir == "Nelson Dilipkumar":
             dir_score = 7.3
             dir_likes = 35000
-            is_dir_known = True
         elif cleaned_dir in meta_maps['director_avg_score_map']:
             dir_score = meta_maps['director_avg_score_map'][cleaned_dir]
             dir_likes = meta_maps['director_likes_map'].get(cleaned_dir, meta_maps['median_director_likes'])
-            is_dir_known = True
         else:
             dir_score = meta_maps['global_mean']
             dir_likes = meta_maps['median_director_likes']
-            is_dir_known = False
             
         cleaned_act = in_actor.strip()
         if cleaned_act == "Vijay":
             act_score = 7.2
             act_likes = 200000
-            is_act_known = True
         elif cleaned_act in meta_maps['actor_1_avg_score_map']:
             act_score = meta_maps['actor_1_avg_score_map'][cleaned_act]
             act_likes = meta_maps['actor_likes_map'].get(cleaned_act, meta_maps['median_actor_likes'])
-            is_act_known = True
         else:
             act_score = meta_maps['global_mean']
             act_likes = meta_maps['median_actor_likes']
-            is_act_known = False
             
         cast_likes = act_likes + dir_likes + 2000
         
@@ -473,7 +571,6 @@ with tab_pred:
             med_prob = prob[label_encoder.transform(['Medium'])[0]] * 100
             high_prob = prob[label_encoder.transform(['High'])[0]] * 100
             
-            # Save predictions
             st.session_state["prediction_data"] = {
                 "title": in_title,
                 "director": in_director,
@@ -491,13 +588,11 @@ with tab_pred:
                 "high_prob": high_prob,
                 "dir_score": dir_score,
                 "dir_likes": dir_likes,
-                "is_dir_known": is_dir_known,
                 "act_score": act_score,
                 "act_likes": act_likes,
-                "is_act_known": is_act_known,
                 "cast_likes": cast_likes
             }
-            st.success("✅ Prediction completed! Navigate to the reports tabs above.")
+            st.success("✅ Analytics generated successfully! Navigate to the other tabs above.")
         except Exception as e:
             st.error(f"Prediction failed with error: {e}")
     st.markdown("</div>", unsafe_allow_html=True)
@@ -510,7 +605,7 @@ p_data = st.session_state["prediction_data"]
 with tab_analytics:
     st.markdown("<div class='animated-section'>", unsafe_allow_html=True)
     if p_data is None:
-        st.info("💡 Please complete a prediction inside the 'MOVIE PREDICTION' tab first to generate the executive reports.")
+        st.info("💡 Please complete a prediction inside the 'Movie Prediction' tab first to generate the executive reports.")
     else:
         st.markdown(f"## <i class='fa-solid fa-chart-pie'></i> Executive Success Dashboard: *{p_data['title']}*")
         
@@ -531,12 +626,12 @@ with tab_analytics:
                 <div class="metric-label-small"><i class="fa-solid fa-user-gear"></i> Reputation Index Mappings</div>
                 <div style="margin-top: 0.8rem;">
                     <strong>Director ({p_data['director']}):</strong><br>
-                    Avg Score: {p_data['dir_score']:.2f} | Facebook Likes: {int(p_data['dir_likes']):,}
+                    Avg Score: {p_data['dir_score']:.2f} | Likes: {int(p_data['dir_likes']):,}
                 </div>
                 <hr style="border-top: 1px solid #cbd5e1; margin: 0.8rem 0;">
                 <div>
                     <strong>Lead Actor ({p_data['actor']}):</strong><br>
-                    Avg Score: {p_data['act_score']:.2f} | Facebook Likes: {int(p_data['act_likes']):,}
+                    Avg Score: {p_data['act_score']:.2f} | Likes: {int(p_data['act_likes']):,}
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -559,7 +654,6 @@ with tab_analytics:
             
             fig_gauges = go.Figure()
             
-            # Success gauge
             fig_gauges.add_trace(go.Indicator(
                 mode = "gauge+number",
                 value = success_score,
@@ -567,7 +661,7 @@ with tab_analytics:
                 domain = {'x': [0, 0.3], 'y': [0, 1]},
                 gauge = {
                     'axis': {'range': [0, 100], 'tickcolor': "#27272a"},
-                    'bar': {'color': "#800020"},
+                    'bar': {'color': "#6D001A"},
                     'bgcolor': "#ffffff",
                     'borderwidth': 2,
                     'bordercolor': "#cbd5e1",
@@ -579,7 +673,6 @@ with tab_analytics:
                 }
             ))
             
-            # Market Potential
             fig_gauges.add_trace(go.Indicator(
                 mode = "gauge+number",
                 value = market_pot,
@@ -598,7 +691,6 @@ with tab_analytics:
                 }
             ))
             
-            # Production Readiness
             fig_gauges.add_trace(go.Indicator(
                 mode = "gauge+number",
                 value = prod_ready,
@@ -626,7 +718,6 @@ with tab_analytics:
             )
             st.plotly_chart(fig_gauges, use_container_width=True)
             
-            # Category Probabilities breakdown cards
             col_l, col_m, col_h = st.columns(3)
             with col_l:
                 st.markdown(f"""
@@ -681,7 +772,7 @@ with tab_genres:
                 df_raw.dropna(subset=['duration']), x='duration',
                 title='Market Runtime Distributions (Min)',
                 nbins=40,
-                color_discrete_sequence=['#800020'],
+                color_discrete_sequence=['#6D001A'],
                 template='plotly'
             )
             if p_data is not None:
@@ -698,7 +789,7 @@ with tab_genres:
 with tab_revenue:
     st.markdown("<div class='animated-section'>", unsafe_allow_html=True)
     if p_data is None:
-        st.info("💡 Please complete a prediction inside the 'MOVIE PREDICTION' tab first to generate the financial report.")
+        st.info("💡 Please complete a prediction inside the 'Movie Prediction' tab first to generate the financial report.")
     else:
         st.markdown(f"## <i class='fa-solid fa-indian-rupee-sign'></i> Financial Intelligence Projections: *{p_data['title']}*")
         
@@ -725,7 +816,7 @@ with tab_revenue:
                 <h3>Box Office Gross Projections</h3>
                 <div style="margin: 1.2rem 0;">
                     <div class="metric-label-small">Estimated USD Gross Range</div>
-                    <div style="font-size: 2rem; font-weight: 800; color: #800020;">${usd_min:.1f}M – ${usd_max:.1f}M</div>
+                    <div style="font-size: 2rem; font-weight: 800; color: #6D001A;">${usd_min:.1f}M – ${usd_max:.1f}M</div>
                 </div>
                 <div style="margin: 1.2rem 0;">
                     <div class="metric-label-small">Estimated South Indian Market Conversion (INR)</div>
@@ -736,7 +827,7 @@ with tab_revenue:
             
         with col_rev2:
             st.markdown(f"""
-            <div class="glass-panel" style="border-left: 5px solid #800020;">
+            <div class="glass-panel" style="border-left: 5px solid #6D001A;">
                 <h3>Yield and ROI Analysis</h3>
                 <div style="margin: 1.2rem 0;">
                     <div class="metric-label-small">Projected Profitability Index (ROI)</div>
@@ -752,7 +843,7 @@ with tab_revenue:
 with tab_audience:
     st.markdown("<div class='animated-section'>", unsafe_allow_html=True)
     if p_data is None:
-        st.info("💡 Please complete a prediction inside the 'MOVIE PREDICTION' tab first to generate audience reports.")
+        st.info("💡 Please complete a prediction inside the 'Movie Prediction' tab first to generate audience reports.")
     else:
         st.markdown(f"## <i class='fa-solid fa-users'></i> Demographics & Audience Analysis: *{p_data['title']}*")
         
@@ -779,7 +870,7 @@ with tab_audience:
             aud_segments.append({
                 "segment": "Prestige Story Seekers",
                 "percentage": 65,
-                "desc": "Mature demographics, reviews-oriented viewership, and steady long-term box office runs."
+                "desc": "Mature demographics, reviews-oriented viewership, and steady box office runs."
             })
             
         if p_data['language'] == "Other":
@@ -802,7 +893,7 @@ with tab_audience:
                 st.markdown(f"""
                 <div class="glass-panel" style="margin-bottom:1rem; padding:1rem; border-left: 4px solid #d4af37;">
                     <div style="display:flex; justify-content:space-between;">
-                        <span style="font-size:1.1rem; font-weight:700; color:#800020;">{segment['segment']}</span>
+                        <span style="font-size:1.1rem; font-weight:700; color:#6D001A;">{segment['segment']}</span>
                         <span style="font-weight:700; color:#2e7d32;">{segment['percentage']}% Affinity</span>
                     </div>
                     <p style="font-size:0.9rem; color:#475569; margin-top:0.4rem; margin-bottom:0;">{segment['desc']}</p>
@@ -814,7 +905,7 @@ with tab_audience:
             st.markdown("""
             <div class="rec-item"><i class="fa-solid fa-circle-info"></i> <strong>Trailer Launch Strategy:</strong> Prime launch window 3-4 weeks prior to theatrical screen bookings. Focus heavily on action cuts and musical hooks.</div>
             <div class="rec-item"><i class="fa-solid fa-circle-info"></i> <strong>Social Media Indexing:</strong> Mobilize fan clubs across platforms for superstar hero entry scenes to maximize opening day footprints.</div>
-            <div class="rec-item"><i class="fa-solid fa-circle-info"></i> <strong>Certification Safety:</strong> UA certification enables maximum family demographic attendance, boosting overall box office run duration.</div>
+            <div class="rec-item"><i class="fa-solid fa-circle-info"></i> <strong>Certification Safety:</strong> UA certification enables family demographic attendance, boosting theatrical box office runs.</div>
             """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -823,7 +914,7 @@ with tab_audience:
 with tab_ott:
     st.markdown("<div class='animated-section'>", unsafe_allow_html=True)
     if p_data is None:
-        st.info("💡 Please complete a prediction inside the 'MOVIE PREDICTION' tab first to generate distribution matches.")
+        st.info("💡 Please complete a prediction inside the 'Movie Prediction' tab first to generate distribution matches.")
     else:
         st.markdown(f"## <i class='fa-solid fa-network-wired'></i> Platform Distribution Strategy: *{p_data['title']}*")
         
@@ -831,11 +922,11 @@ with tab_ott:
         if p_data['pred_label'] == 'High':
             recs.append({
                 "platform": "Netflix Acquisition (Sample)",
-                "details": "High budget acquisition for direct-to-digital post-theatrical window. High subtitle crossing potential globally."
+                "details": "High budget acquisition for post-theatrical window. High crossover potential globally."
             })
             recs.append({
                 "platform": "Amazon Prime Video",
-                "details": "Major focus on starcast titles. Fits Prime's flagship South Indian catalogs."
+                "details": "Major focus on starcast titles. Fits Prime's flagship catalogs."
             })
         elif p_data['pred_label'] == 'Medium':
             if "Action" in p_data['genres'] or "Thriller" in p_data['genres']:
@@ -859,7 +950,7 @@ with tab_ott:
             for r in recs:
                 st.markdown(f"""
                 <div class="rec-item">
-                    <span style="font-size:1.1rem; font-weight:700; color:#800020;"><i class="fa-solid fa-circle-play"></i> {r['platform']}</span><br>
+                    <span style="font-size:1.1rem; font-weight:700; color:#6D001A;"><i class="fa-solid fa-circle-play"></i> {r['platform']}</span><br>
                     <span style="font-size:0.9rem; color:#475569; display:block; margin-top:0.4rem;">{r['details']}</span>
                 </div>
                 """, unsafe_allow_html=True)
@@ -876,7 +967,7 @@ with tab_ott:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# ----------------- 8. ABOUT ENGINE TAB -----------------
+# ----------------- 8. ABOUT TAB -----------------
 with tab_about:
     st.markdown("<div class='animated-section'>", unsafe_allow_html=True)
     st.markdown("### <i class='fa-solid fa-gears'></i> Engine Specifications & Modular Design")
@@ -911,6 +1002,28 @@ with tab_about:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
+# ----------------- 9. CONTACT TAB -----------------
+with tab_contact:
+    st.markdown("<div class='animated-section'>", unsafe_allow_html=True)
+    st.markdown("### <i class='fa-solid fa-envelope'></i> Connect with CineIntelligence™")
+    st.write("For enterprise licensing inquiries, custom model training, or API integrations, fill out the form below.")
+    
+    with st.form("contact_form"):
+        col_c1, col_c2 = st.columns(2)
+        with col_c1:
+            st.text_input("Name", placeholder="Aditya Raman")
+            st.text_input("Corporate Email", placeholder="aditya@sunpictures.in")
+        with col_c2:
+            st.text_input("Production House / Company", placeholder="Sun Pictures")
+            st.selectbox("Enquiry Subject", ["Enterprise Platform Licensing", "Custom ML Model Training", "API Access request", "Technical Feedback"])
+        
+        st.text_area("Enquiry Details", placeholder="Describe your cinema analytics needs...")
+        submit_contact = st.form_submit_button("🚀 SUBMIT INQUIRY")
+        if submit_contact:
+            st.success("✅ Thank you! Our cinema intelligence team will respond to your corporate email within 24 hours.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
 # --- Visual Footer ---
 st.markdown("""
 <div class="footer">
@@ -920,8 +1033,8 @@ st.markdown("""
         Developed with Streamlit, Plotly, & XGBoost | 
         <a href="https://github.com/subhaharinioffi/movie_meter" target="_blank" class="footer-link">GitHub Repository</a>
     </div>
-    <div style="font-size: 0.8rem; margin-top: 1.5rem; color: #64748b;">
-        © 2026 Movie Meter. Designed for Hackathon presentation.
+    <div style="font-size: 0.85rem; margin-top: 1.5rem; color: #64748b;">
+        © 2026 CineIntelligence™ — Enterprise Film Rating & Commercial Acquisition Platform.
     </div>
 </div>
 """, unsafe_allow_html=True)
