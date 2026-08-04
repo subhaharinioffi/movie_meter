@@ -300,7 +300,7 @@ st.markdown("""
     }
 
     /* 10. SaaS Pill buttons override */
-    div.stButton > button {
+    div.stButton > button, div.stButton > button *, div.stButton > button:hover, div.stButton > button:hover * {
         background: linear-gradient(to right, #6D001A, #900c27) !important;
         color: #ffffff !important;
         border: none !important;
@@ -315,6 +315,24 @@ st.markdown("""
         transform: scale(1.03) !important;
         background: linear-gradient(to right, #900c27, #6D001A) !important;
         box-shadow: 0 6px 20px rgba(109, 0, 26, 0.3) !important;
+    }
+    
+    /* Input widgets and labels colors overrides to guarantee high contrast light mode readability */
+    label, [data-testid="stWidgetLabel"] p, .stWidgetLabel p, [data-testid="stWidgetLabel"] {
+        color: #0f172a !important;
+        font-weight: 700 !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-size: 0.95rem !important;
+    }
+    .stTextInput input, .stNumberInput input, .stTextArea textarea, div[data-baseweb="input"] input, [data-baseweb="select"] {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+    }
+    /* Style selectbox selection text */
+    div[data-baseweb="select"] div, div[data-baseweb="select"] span {
+        color: #0f172a !important;
     }
     
     /* 11. Footer */
@@ -356,16 +374,15 @@ st.markdown("""
         <a href="#audience" class="nav-link">Audience</a>
         <a href="#ott" class="nav-link">OTT Match</a>
         <a href="#about" class="nav-link">About</a>
-        <a href="#contact" class="nav-link">Contact</a>
     </div>
-    <div class="nav-status-badge">CineIntelligence™ v2.0</div>
+    <div class="nav-status-badge">Movie Meter v2.0</div>
 </div>
 
 <!-- Injected HTML Loader overlay -->
 <div class="app-loader">
     <div class="ai-pulse"><i class="fa-solid fa-clapperboard"></i></div>
     <h2 style="font-family:'Cinzel', serif; color:#6D001A; margin-top:1.2rem; font-weight:800; letter-spacing:1px;">MOVIE METER</h2>
-    <p style="color:#64748b; font-family:'Inter', sans-serif; font-size:0.9rem; font-weight:500;">Initializing Cinema Intelligence...</p>
+    <p style="color:#64748b; font-family:'Inter', sans-serif; font-size:0.9rem; font-weight:500;">Initializing success engine...</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1078,36 +1095,17 @@ with col_ab2:
     """, unsafe_allow_html=True)
 
 
-# ----------------- 9. CONTACT SECTION -----------------
-st.markdown("<div id='contact' class='scroll-section'></div>", unsafe_allow_html=True)
-st.markdown("## <i class='fa-solid fa-envelope'></i> Connect with CineIntelligence™", unsafe_allow_html=True)
-
-with st.form("contact_form"):
-    col_c1, col_c2 = st.columns(2)
-    with col_c1:
-        st.text_input("Name", placeholder="Aditya Raman")
-        st.text_input("Corporate Email", placeholder="aditya@sunpictures.in")
-    with col_c2:
-        st.text_input("Production House / Company", placeholder="Sun Pictures")
-        st.selectbox("Enquiry Subject", ["Enterprise Platform Licensing", "Custom ML Model Training", "API Access request", "Technical Feedback"])
-    
-    st.text_area("Enquiry Details", placeholder="Describe your cinema analytics needs...")
-    submit_contact = st.form_submit_button("🚀 SUBMIT INQUIRY")
-    if submit_contact:
-        st.success("✅ Thank you! Our team will respond to your corporate email within 24 hours.")
-
-
 # --- Visual Footer ---
 st.markdown("""
 <div class="footer">
     <div class="footer-title"><i class="fa-solid fa-ticket"></i> MOVIE METER</div>
-    <div style="font-size: 0.85rem; margin-top: 0.5rem;">AI-Powered Cinema Intelligence Platform for South Indian Box Office</div>
+    <div style="font-size: 0.85rem; margin-top: 0.5rem;">AI-Powered Cinema Success Analytics Platform for South Indian Box Office</div>
     <div style="margin-top: 1rem; font-size: 0.85rem;">
         Developed with Streamlit, Plotly, & XGBoost | 
         <a href="https://github.com/subhaharinioffi/movie_meter" target="_blank" class="footer-link">GitHub Repository</a>
     </div>
     <div style="font-size: 0.85rem; margin-top: 1.5rem; color: #64748b;">
-        © 2026 CineIntelligence™ — Enterprise Film Rating & Commercial Acquisition Platform.
+        © 2026 Movie Meter — Enterprise Film Rating & Commercial Acquisition Platform.
     </div>
 </div>
 """, unsafe_allow_html=True)
