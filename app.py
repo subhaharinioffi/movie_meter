@@ -164,24 +164,38 @@ st.markdown("""
     .scroll-section {
         padding-top: 80px !important;
         margin-bottom: 2.5rem !important;
-        animation: sectionSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: sectionSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes sectionSlideUp {
-        from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Icon rotation micro-interaction on section hover */
+    .scroll-section h2 i {
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
+    }
+    .scroll-section:hover h2 i {
+        transform: rotate(15deg) scale(1.2);
+        color: #FFD54F !important;
     }
 
     /* 5. Hero container */
     .hero-panel {
         background: linear-gradient(135deg, #6D001A 0%, #3a000d 100%);
-        border-radius: 20px;
-        padding: 4rem 2rem;
+        border-radius: 24px;
+        padding: 4.5rem 2.5rem;
         text-align: center;
         box-shadow: 0 8px 30px rgba(109, 0, 26, 0.15);
         color: #ffffff;
         margin-bottom: 2rem;
         position: relative;
         overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hero-panel:hover {
+        box-shadow: 0 15px 40px rgba(109, 0, 26, 0.25);
     }
     
     .hero-panel::before {
@@ -219,16 +233,16 @@ st.markdown("""
     .glass-panel {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 18px;
+        border-radius: 20px;
         padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         margin-bottom: 1.5rem;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .glass-panel:hover {
-        transform: translateY(-6px) scale(1.01);
-        border-color: #cbd5e1;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+        transform: translateY(-8px) scale(1.015);
+        border-color: #6D001A;
+        box-shadow: 0 20px 40px rgba(109, 0, 26, 0.08);
     }
     
     /* 7. South Indian demo showcase card */
@@ -238,16 +252,17 @@ st.markdown("""
         border-top: 1px solid #e2e8f0;
         border-right: 1px solid #e2e8f0;
         border-bottom: 1px solid #e2e8f0;
-        border-radius: 14px;
+        border-radius: 16px;
         padding: 1.8rem;
         margin-bottom: 2rem;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .demo-badge-title {
-        font-family: 'Cinzel', serif;
-        color: #6D001A;
-        font-weight: 700;
-        font-size: 1.3rem;
+    .demo-showcase-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(109, 0, 26, 0.06);
+        border-color: #FFD54F;
+    }
         margin-bottom: 1rem;
         border-bottom: 1px solid #e2e8f0;
         padding-bottom: 0.5rem;
