@@ -379,9 +379,8 @@ st.markdown("""
 
 <!-- Custom Fixed Sticky Top Header -->
 <div class="sticky-header">
-    <a href="#home" class="nav-title"><i class="fa-solid fa-ticket"></i> MOVIE METER</a>
+    <a href="#prediction" class="nav-title"><i class="fa-solid fa-ticket"></i> MOVIE METER</a>
     <div class="nav-links">
-        <a href="#home" class="nav-link">Home</a>
         <a href="#prediction" class="nav-link">Prediction</a>
         <a href="#analytics" class="nav-link">Analytics</a>
         <a href="#genres" class="nav-link">Genre Trends</a>
@@ -523,89 +522,7 @@ if "prediction_data" not in st.session_state:
 # RENDER ALL SECTIONS ON A SINGLE SCROLLING PAGE
 # -------------------------------------------------------------
 
-# ----------------- 1. HOME SECTION -----------------
-st.markdown("<div id='home' class='scroll-section'></div>", unsafe_allow_html=True)
-st.markdown("## <i class='fa-solid fa-house'></i> Platform Overview", unsafe_allow_html=True)
 
-# Elegant Movie Information Card with Default Tamil Commercial Film details (Vijay's Beast)
-st.markdown("""
-<div class="demo-showcase-card">
-    <div class="demo-badge-title"><i class="fa-solid fa-film"></i> Default Showcase Project: Tamil Commercial Cinema Demo</div>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem;">
-        <div><i class="fa-solid fa-file-signature" style="color: #6D001A;"></i> <strong>Movie Title:</strong> Beast</div>
-        <div><i class="fa-solid fa-user-ninja" style="color: #6D001A;"></i> <strong>Lead Actor:</strong> Vijay</div>
-        <div><i class="fa-solid fa-user-tie" style="color: #6D001A;"></i> <strong>Director:</strong> Nelson Dilipkumar</div>
-        <div><i class="fa-solid fa-user" style="color: #6D001A;"></i> <strong>Lead Actress:</strong> Pooja Hegde</div>
-        <div><i class="fa-solid fa-music" style="color: #6D001A;"></i> <strong>Music Composer:</strong> Anirudh Ravichander</div>
-        <div><i class="fa-solid fa-language" style="color: #6D001A;"></i> <strong>Language:</strong> Tamil</div>
-        <div><i class="fa-solid fa-tags" style="color: #6D001A;"></i> <strong>Genre:</strong> Action Thriller</div>
-        <div><i class="fa-solid fa-clock" style="color: #6D001A;"></i> <strong>Runtime:</strong> 155 minutes</div>
-        <div><i class="fa-solid fa-calendar-days" style="color: #6D001A;"></i> <strong>Release Year:</strong> 2022</div>
-        <div><i class="fa-solid fa-building" style="color: #6D001A;"></i> <strong>Production Base:</strong> Sun Pictures</div>
-        <div><i class="fa-solid fa-earth-asia" style="color: #6D001A;"></i> <strong>Country:</strong> India</div>
-        <div><i class="fa-solid fa-users" style="color: #6D001A;"></i> <strong>Target Audience:</strong> Action & Family</div>
-        <div><i class="fa-solid fa-network-wired" style="color: #6D001A;"></i> <strong>Sample OTT:</strong> Netflix</div>
-    </div>
-    <div style="font-size:0.85rem; color:#64748b; margin-top: 1rem; border-top: 1px dashed #cbd5e1; padding-top: 0.5rem;">
-        * These inputs are loaded as editable defaults in the form below. Adjust them freely to recalculate scores.
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-col_h1, col_h2 = st.columns(2)
-with col_h1:
-    st.markdown("""
-    <div class="glass-panel">
-        <h3><i class="fa-solid fa-network-wired"></i> Platform Intelligence</h3>
-        <p>Welcome to <strong>Movie Meter</strong>, a cinema analytics engine. Our system parses pre-production screenplay profiles to estimate final rating categories before release.</p>
-        <p>By mapping director and superstar reputation indexes out-of-fold during training, we capture historical coefficients, helping distribution agencies optimize digital licensing windows.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-with col_h2:
-    st.markdown("""
-    <div class="glass-panel">
-        <h3><i class="fa-solid fa-lightbulb"></i> Pillars of Analysis</h3>
-        <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #6D001A;"></i> <strong>Reputation Indexing:</strong> Mappings analyze statistics for directors and lead actors.</div>
-        <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #6D001A;"></i> <strong>Distribution Calibration:</strong> Recommends OTT platform licensing options.</div>
-        <div style="margin: 0.8rem 0;"><i class="fa-solid fa-circle-check" style="color: #6D001A;"></i> <strong>Zero Data Leakage:</strong> Calculations omit ticket counts or post-release votes.</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-st.markdown("### <i class='fa-solid fa-database'></i> Dataset Overview", unsafe_allow_html=True)
-col_stat1, col_stat2, col_stat3, col_stat4 = st.columns(4)
-with col_stat1:
-    st.markdown("""
-    <div class="glass-panel" style="text-align: center;">
-        <div class="metric-label-small">Database Catalog</div>
-        <div class="metric-value-large" style="color: #6D001A;">4,919+</div>
-        <div style="font-size:0.8rem; color:#64748b;">Classified Movies</div>
-    </div>
-    """, unsafe_allow_html=True)
-with col_stat2:
-    st.markdown("""
-    <div class="glass-panel" style="text-align: center;">
-        <div class="metric-label-small">Known Directors</div>
-        <div class="metric-value-large" style="color: #6D001A;">2,398+</div>
-        <div style="font-size:0.8rem; color:#64748b;">Profiles Mapped</div>
-    </div>
-    """, unsafe_allow_html=True)
-with col_stat3:
-    st.markdown("""
-    <div class="glass-panel" style="text-align: center;">
-        <div class="metric-label-small">Model Accuracy</div>
-        <div class="metric-value-large" style="color: #6D001A;">62.1%</div>
-        <div style="font-size:0.8rem; color:#64748b;">XGBoost Classifier</div>
-    </div>
-    """, unsafe_allow_html=True)
-with col_stat4:
-    st.markdown("""
-    <div class="glass-panel" style="text-align: center;">
-        <div class="metric-label-small">Weighted ROC-AUC</div>
-        <div class="metric-value-large" style="color: #6D001A;">73.0%</div>
-        <div style="font-size:0.8rem; color:#64748b;">Precision Margin</div>
-    </div>
-    """, unsafe_allow_html=True)
 
 
 # ----------------- 2. MOVIE PREDICTION SECTION -----------------
