@@ -408,6 +408,10 @@ if assets is None:
 
 meta_maps, preprocessor, model, label_encoder, df_raw = assets
 
+# Initialize session state variables
+if "prediction_data" not in st.session_state:
+    st.session_state["prediction_data"] = None
+
 # Sticky Navigation Tabs
 tab_home, tab_pred, tab_analytics, tab_genres, tab_revenue, tab_audience, tab_ott, tab_about, tab_contact = st.tabs([
     "Home", 
