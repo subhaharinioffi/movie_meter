@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant UI as Streamlit Frontend
+    participant App as app.py (Inference Engine)
+    participant Maps as models/director_actor_maps.joblib
+    participant Prep as models/preprocessor.joblib
+    participant Model as models/movie_meter_model.joblib
+
+    User->>UI: Input Movie Metadata (Wes Anderson, Ralph Fiennes, Comedy|Drama, 99 min)
+    UI->>App: Trigger Prediction Event
+    App->>Maps: Fetch Director and Lead Actor stats
+    Maps-->>App: Returns historical mean score & likes count
+    Note over App: pre-fill likes and ratings; construct inputs dataframe
+    App->>Prep: Feed inputs dataframe
+    Prep-->>App: Return preprocessed scaled matrix
+    App->>Model: Run model.predict_proba(matrix)
+    Model-->>App: Returns probability array for classes [Low, Medium, High]
+    Note over App: Parse highest-probability class and confidence score
+    App->>UI: Render styled card, bar charts, and strategic content suggestions
+    UI->>User: Display Category, Confidence, and Strategic suggestion

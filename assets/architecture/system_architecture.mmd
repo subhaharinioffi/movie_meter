@@ -1,0 +1,23 @@
+graph TD
+    %% Define components
+    subgraph Data Layer
+        A[GitHub Raw IMDb CSV] -->|data_loader.py| B[data/raw/movie_metadata.csv]
+    end
+
+    subgraph Offline ML Pipeline
+        B -->|preprocessor.py| C[Imputation, Scaling, Target Encoding]
+        C -->|model_trainer.py| D[Model Comparison & Selection]
+        D -->|Save Assets| E[(models/ preprocessor.joblib, movie_meter_model.joblib, maps.joblib)]
+    end
+
+    subgraph Online Web App
+        F[Streamlit Frontend User Input] -->|Title, Director, Cast, Runtime, Genre| G[app.py Backend Controller]
+        E -->|Load Model & Metadata| G
+        G -->|Dynamic Lookup| H[Director/Actor reputation & Facebook likes]
+        H -->|Pipeline Transform| I[Predict Class Probabilities]
+        I -->|Render Styled Card| F
+    end
+
+    classDef layer fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef comp fill:#bbf,stroke:#333,stroke-width:1px;
+    class Data Layer,Offline ML Pipeline,Online Web App layer;
