@@ -408,9 +408,75 @@ if assets is None:
 
 meta_maps, preprocessor, model, label_encoder, df_raw = assets
 
-# Initialize session state variables
+# Initialize session state variables with default Beast project prediction
 if "prediction_data" not in st.session_state:
-    st.session_state["prediction_data"] = None
+    # Fictional Beast inputs
+    d_title = "Beast"
+    d_director = "Nelson Dilipkumar"
+    d_actor = "Vijay"
+    d_genres = ["Action", "Thriller"]
+    d_duration = 155
+    d_year = 2022
+    d_lang = "Other"
+    d_country = "Other"
+    d_rating = "PG-13"
+    d_faces = 3
+    
+    # Fictional metrics
+    d_dir_score = 7.3
+    d_dir_likes = 35000
+    d_act_score = 7.2
+    d_act_likes = 200000
+    d_cast_likes = d_act_likes + d_dir_likes + 2000
+    
+    d_record = {
+        'duration': d_duration,
+        'title_year': d_year,
+        'director_facebook_likes': d_dir_likes,
+        'cast_total_facebook_likes': d_cast_likes,
+        'facenumber_in_poster': d_faces,
+        'is_english': 0,
+        'country_grouped': d_country,
+        'content_rating_grouped': d_rating,
+        'director_avg_score': d_dir_score,
+        'actor_1_avg_score': d_act_score
+    }
+    for g in meta_maps['top_genres']:
+        d_record[f'genre_{g}'] = 1 if g in d_genres else 0
+        
+    d_df = pd.DataFrame([d_record])
+    d_trans = preprocessor.transform(d_df)
+    d_pred_idx = model.predict(d_trans)[0]
+    d_prob = model.predict_proba(d_trans)[0]
+    
+    d_pred_label = label_encoder.inverse_transform([d_pred_idx])[0]
+    d_confidence = d_prob[d_pred_idx] * 100
+    
+    d_low_prob = d_prob[label_encoder.transform(['Low'])[0]] * 100
+    d_med_prob = d_prob[label_encoder.transform(['Medium'])[0]] * 100
+    d_high_prob = d_prob[label_encoder.transform(['High'])[0]] * 100
+    
+    st.session_state["prediction_data"] = {
+        "title": d_title,
+        "director": d_director,
+        "actor": d_actor,
+        "genres": d_genres,
+        "duration": d_duration,
+        "year": d_year,
+        "language": d_lang,
+        "country": d_country,
+        "rating": d_rating,
+        "pred_label": d_pred_label,
+        "confidence": d_confidence,
+        "low_prob": d_low_prob,
+        "med_prob": d_med_prob,
+        "high_prob": d_high_prob,
+        "dir_score": d_dir_score,
+        "dir_likes": d_dir_likes,
+        "act_score": d_act_score,
+        "act_likes": d_act_likes,
+        "cast_likes": d_cast_likes
+    }
 
 # Sticky Navigation Tabs
 tab_home, tab_pred, tab_analytics, tab_genres, tab_revenue, tab_audience, tab_ott, tab_about, tab_contact = st.tabs([
